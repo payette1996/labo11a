@@ -12,12 +12,6 @@
     $password = (string) "";
     $vm = new VoitureManager(new PDO($dsn, $user, $password));
 
-    $voituresArr = $vm->getVoitures($vm);
-
-    foreach($voituresArr as $voiture) {
-        echo "{$voiture['marque']} {$voiture['modele']}<br>";
-    }
-
     echo '<h1>Voitures disponibles</h1>';
 
     if (isset($_GET['idVoiture'])) {
@@ -38,15 +32,15 @@
         echo '<h2>Sélectionnez une voiture pour en savoir plus</h2>
               <ul class="car_list">';
 
-        for ($i = 0; $i < sizeof(CAR_INFO); $i++) {
-            $voitureObj = selectCarById(($i + 1), CAR_INFO);
-
-            echo '<li><a href="./voitures.php?idVoiture=' . $voitureObj->get_id() . '">' .
-                    $voitureObj->get_marque() . ' ' . $voitureObj->get_modele() . '</a></li>';
+        $voituresArr = $vm->getVoitures($vm);
+        foreach($voituresArr as $voiture) {
+            echo "
+                <li><a href='http://localhost/Laboratoire11B/voitures.php?idVoiture={$voiture['idVoiture']}'>
+                    {$voiture['marque']} {$voiture['modele']}</a></li>
+            ";
         }
     
         echo '</ul>';
     }
 
     require_once './inc/footer.html';
-?>

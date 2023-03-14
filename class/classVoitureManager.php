@@ -1,7 +1,7 @@
 <?php
     class VoitureManager
     {
-        const SELECT_VOITURES = "SELECT marque, modele FROM tblvoiture LEFT JOIN tblmarque ON tblvoiture.idVoiture = tblmarque.idMarque";
+        const SELECT_VOITURES = "SELECT idVoiture, marque, modele FROM tblvoiture LEFT JOIN tblmarque ON tblvoiture.idVoiture = tblmarque.idMarque";
 
         private ?PDO $db;
 
