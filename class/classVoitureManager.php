@@ -10,7 +10,7 @@
             $this->db = $db;
         }
 
-        public function getVoitures(PDO $db) : array
+        public function getVoitures($db) : ?array
         {
             return $this->db->query(self::SELECT_VOITURES)->fetchAll();
         }

@@ -4,6 +4,19 @@
 
     require_once './inc/header.php';
     require_once './inc/car-info.php';
+    require_once "./class/classVoitureManager.php";
+
+    $bd = (string) "dblocation";
+    $dsn = (string) "mysql:dbname=$bd;host=127.0.0.1";
+    $user = (string) "root";
+    $password = (string) "";
+    $vm = new VoitureManager(new PDO($dsn, $user, $password));
+
+    $voituresArr = $vm->getVoitures($vm);
+
+    foreach($voituresArr as $voiture) {
+        echo $voiture["modele"] . "<br>";
+    }
 
     echo '<h1>Voitures disponibles</h1>';
 
