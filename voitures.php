@@ -15,7 +15,7 @@
     $voituresArr = $vm->getVoitures($vm);
 
     foreach($voituresArr as $voiture) {
-        echo $voiture["modele"] . "<br>";
+        echo "{$voiture['marque']} {$voiture['modele']}<br>";
     }
 
     echo '<h1>Voitures disponibles</h1>';
