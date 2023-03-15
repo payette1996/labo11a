@@ -15,15 +15,16 @@
     echo '<h1>Voitures disponibles</h1>';
 
     if (isset($_GET['idVoiture'])) {
-        $voitureObj = selectCarById($_GET['idVoiture'], CAR_INFO);
+        $id = (int) $_GET['idVoiture'];
+        $voitureObj = $vm->getVoiture($id);
 
         echo '<article class="grille">
-                <h2>' . $voitureObj->get_marque() . ' ' . $voitureObj->get_modele() . ' - ' .
-                    $voitureObj->get_categorie() . '</h2>
-                <img src="./inc/img/' . $voitureObj->get_image() . '" alt="' . $voitureObj->get_marque() .
-                    ' ' . $voitureObj->get_modele() . '" />
-                <p><strong>Passager :</strong> ' . $voitureObj->get_nbPassager() . '</p>
-                <p><strong>Description :</strong> ' . $voitureObj->get_description() . '</p>
+                <h2>' . $voitureObj->marque . ' ' . $voitureObj->modele . ' - ' .
+                    $voitureObj->categorie . '</h2>
+                <img src="./inc/img/' . $voitureObj->image . '" alt="' . $voitureObj->marque .
+                    ' ' . $voitureObj->modele . '" />
+                <p><strong>Passager :</strong> ' . $voitureObj->nbPassager . '</p>
+                <p><strong>Description :</strong> ' . $voitureObj->description . '</p>
               </article>
               <p class="retour"><a href="./voitures.php">Retour à la liste des voitures</a></p>';
     }
@@ -32,7 +33,7 @@
         echo '<h2>Sélectionnez une voiture pour en savoir plus</h2>
               <ul class="car_list">';
 
-        $voituresArr = $vm->getVoitures();
+        $voituresArr = $vm->getVoiture();
         foreach($voituresArr as $voiture) {
             echo "
                 <li><a href='http://localhost/Laboratoire11B/voitures.php?idVoiture={$voiture->idVoiture}'>
