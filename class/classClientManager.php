@@ -47,7 +47,7 @@ class ClientManager
 
             // tblpays : get country ID or insert the country and get ID
             $sql2 = "SELECT idPays from tblPays WHERE pays = :pays";
-            $stmt2 = $this->_pdo->prepare($stmt1);
+            $stmt2 = $this->_pdo->prepare($sql2);
             $stmt2->bindValue(":pays", $clientObj->_pays);
             $stmt2->execute();
 
@@ -70,7 +70,7 @@ class ClientManager
             $clientObj->_idTypeTel = $stmt3->fetchColumn();
 
             // MAIN INSERT
-            $sql = "
+            $sql4 = "
                 INSERT INTO tblclient (
                     prenom,
                     nom,
@@ -105,6 +105,8 @@ class ClientManager
                 )
             ";
 
+            $stmt4 = $this->_pdo->prepare($sql4);
+
             $clientObj->_dateCreation = date("Y-m-d H:i:s");
 
             $data = [
@@ -123,6 +125,12 @@ class ClientManager
                 ":modalite" => $clientObj->_modalite,
                 ":dateCreation" => $clientObj->_
             ];
+
+            foreach ($data as $key => $value) {
+                $stmt4->bindValue($key, $value);
+            }
+
+            $stmt4->execute();
 
             $this->_pdo->commit();
 
