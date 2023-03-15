@@ -19,6 +19,14 @@ class ClientManager
         try {
             $this->_pdo->beginTransaction();
 
+            // idPays
+            $sql0 = "SELECT * FROM tblpays WHERE pays = :pays";
+            $stmt0 = $this->_pdo->prepare($sql0);
+            $stmt0->bindValue(":pays", $clientObj->_pays);
+            $stmt0->execute();
+
+            $clientObj->_idPays = $stmt0->fetchColumn();
+
             // tbladresse INSERT
             $sql1 = "
                 INSERT INTO tbladresse (noPorte, rue, ville, province, codePostal, idPays)
@@ -35,7 +43,7 @@ class ClientManager
             ];
             $stmt1->execute($values1);
 
-            $idAdresse = $this->_pdo->lastInsertId();
+            $clientObj->_idAdresse = $this->_pdo->lastInsertId();
 
             // tblpays : get country ID or insert the country and get ID
             $sql2 = "SELECT idPays from tblPays WHERE pays = :pays";
@@ -53,16 +61,32 @@ class ClientManager
                 $idPays = $this->_pdo->lastInsertId();
             }
 
-            // tbltypetel INSERT (idTypeTel, typeTel)
-            $sql3 = "SELECT id FROM tbltypetel WHERE typeTel = :typetel";
+            // Gets the typetel ID according to the selected typetel
+            $sql3 = "SELECT idTypeTel FROM tbltypetel WHERE typeTel = :typetel";
             $stmt3 = $this->_pdo->prepare($sql3);
+            $stmt3->bindValue(":typetel", $clientObj->_typeTelephone);
             $stmt3->execute();
 
-            $idTypeTel = $stmt3->fetchColumn();
+            $clientObj->_idTypeTel = $stmt3->fetchColumn();
 
             // MAIN INSERT
             $sql = "
-                INSERT INTO tblclient
+                INSERT INTO tblclient (
+                    prenom,
+                    nom,
+                    courriel,
+                    mdp,
+                    idAdresse,
+                    idTypeTel,
+                    tel,
+                    idPaysDelivrance,
+                    noPermis,
+                    dateNaissance,
+                    dateExp,
+                    infolettre,
+                    modalite,
+                    dateCreation
+                )
                 VALUES (
                     :prenom,
                     :nom,
@@ -81,8 +105,27 @@ class ClientManager
                 )
             ";
 
+            $clientObj->_dateCreation = date("Y-m-d H:i:s");
+
+            $data = [
+                ":prenom" => $clientObj->_prenom,
+                ":nom" => $clientObj->_nom,
+                ":courriel" => $clientObj->_courriel,
+                ":mdp" => $clientObj->_mdp,
+                ":idAdresse" => $clientObj->_idAdresse,
+                ":idTypeTel" => $clientObj->_idTypeTel,
+                ":tel" => $clientObj->_tel,
+                ":idPaysDelivrance" => $clientObj->_,
+                ":noPermis" => $clientObj->_noPermis,
+                ":dateNaissance" => $clientObj->_dateNaissance,
+                ":dateExp" => $clientObj->_dateExp,
+                ":infolettre" => $clientObj->_infolettre,
+                ":modalite" => $clientObj->_modalite,
+                ":dateCreation" => $clientObj->_
+            ];
+
             $this->_pdo->commit();
-            
+
         } catch(PDOException $error) {
             $this->_pdo->rollBack();
             throw new Exception($error);
