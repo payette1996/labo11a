@@ -16,70 +16,81 @@ class ClientManager
         $clientObj->_noPorte = $matches[1];
         $clientObj->_rue = $matches[2];
 
-        // tbladresse INSERT
-        $sql1 = "
-            INSERT INTO tbladresse (noPorte, rue, ville, province, codePostal, idPays)
-            VALUES (:noPorte, :rue, :ville, :province, :codePostal, :idPays)
-        ";
+        try {
+            $this->_pdo->beginTransaction();
 
-        $stmt1 = $this->_pdo->prepare($sql1);
+            // tbladresse INSERT
+            $sql1 = "
+                INSERT INTO tbladresse (noPorte, rue, ville, province, codePostal, idPays)
+                VALUES (:noPorte, :rue, :ville, :province, :codePostal, :idPays)
+            ";
+            $stmt1 = $this->_pdo->prepare($sql1);
+            $values1 = [
+                ":noPorte" => $clientObj->_noPorte,
+                ":rue" => $clientObj->_rue,
+                ":ville" => $clientObj->_ville,
+                ":province" => $clientObj->_province,
+                ":codePostal" => $clientObj->_codePostal,
+                ":idPays" => $clientObj->_idPays,
+            ];
+            $stmt1->execute($values1);
 
-        $values1 = [
-            ":noPorte" => $clientObj->_noPorte,
-            ":rue" => $clientObj->_rue,
-            ":ville" => $clientObj->_ville,
-            ":province" => $clientObj->_province,
-            ":codePostal" => $clientObj->_codePostal,
-            ":idPays" => $clientObj->_idPays,
-        ];
+            $idAdresse = $this->_pdo->lastInsertId();
 
-        $stmt1->execute($values1);
+            // tblpays : get country ID or insert the country and get ID
+            $sql2 = "SELECT idPays from tblPays WHERE pays = :pays";
+            $stmt2 = $this->_pdo->prepare($stmt1);
+            $stmt2->bindValue(":pays", $clientObj->_pays);
+            $stmt2->execute();
 
-        $idAdresse = $this->_pdo->lastInsertId();
+            if ($stmt2->rowCount() > 0) {
+                $idPays = $stmt2->fetchColumn();
+            } else {
+                $sql = "INSERT INTO tblpays (pays) VALUES :pays";
+                $stmt = $this->_pdo->prepare($sql);
+                $stmt->bindValue(":pays", $clientObj->_pays);
+                $stmt->execute();
+                $idPays = $this->_pdo->lastInsertId();
+            }
 
-        // tblpays INSERT (idPays, pays)
-        $sql2 = "";
+            // tbltypetel INSERT (idTypeTel, typeTel)
+            $sql3 = "";
 
-        $stmt2 = "";
+            $stmt3 = "";
 
-        $values2 = "";
+            $values3 = "";
 
-        $stmt2->execute($values2);
+            $stmt3->execute($values3);
 
-        $idPays = $this->_pdo->lastInsertId();
+            $idTypeTel = $this->_pdo->lastInsertId();
 
+            // MAIN INSERT
+            $sql = "
+                INSERT INTO tblclient
+                VALUES (
+                    :prenom,
+                    :nom,
+                    :courriel,
+                    :mdp,
+                    :idAdresse,
+                    :idTypeTel,
+                    :tel,
+                    :idPaysDelivrance,
+                    :noPermis,
+                    :dateNaissance,
+                    :dateExp,
+                    :infolettre,
+                    :modalite,
+                    :dateCreation
+                )
+            ";
 
-        // tbltypetel INSERT (idTypeTel, typeTel)
-        $sql3 = "";
-
-        $stmt3 = "";
-
-        $values3 = "";
-
-        $stmt3->execute($values3);
-
-        $idTypeTel = $this->_pdo->lastInsertId();
-
-        // MAIN INSERT
-        $sql = "
-            INSERT INTO tblclient
-            VALUES (
-                :prenom,
-                :nom,
-                :courriel,
-                :mdp,
-                :idAdresse,
-                :idTypeTel,
-                :tel,
-                :idPaysDelivrance,
-                :noPermis,
-                :dateNaissance,
-                :dateExp,
-                :infolettre,
-                :modalite,
-                :dateCreation
-            )
-        ";
+            $this->_pdo->commit();
+            
+        } catch(PDOException $error) {
+            $this->_pdo->rollBack();
+            throw new Exception($error);
+        }
     }
 }
 ?>
