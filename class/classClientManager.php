@@ -113,7 +113,7 @@ class ClientManager
                 ":prenom" => $clientObj->_prenom,
                 ":nom" => $clientObj->_nom,
                 ":courriel" => $clientObj->_courriel,
-                ":mdp" => $clientObj->_mdp,
+                ":mdp" => password_hash($clientObj->_mdp, PASSWORD_BCRYPT),
                 ":idAdresse" => $clientObj->_idAdresse,
                 ":idTypeTel" => $clientObj->_idTypeTel,
                 ":tel" => $clientObj->_tel,
@@ -123,7 +123,7 @@ class ClientManager
                 ":dateExp" => $clientObj->_dateExp,
                 ":infolettre" => $clientObj->_infolettre,
                 ":modalite" => $clientObj->_modalite,
-                ":dateCreation" => $clientObj->_
+                ":dateCreation" => $clientObj->_dateCreation
             ];
 
             foreach ($data as $key => $value) {
