@@ -54,15 +54,11 @@ class ClientManager
             }
 
             // tbltypetel INSERT (idTypeTel, typeTel)
-            $sql3 = "";
+            $sql3 = "SELECT id FROM tbltypetel WHERE typeTel = :typetel";
+            $stmt3 = $this->_pdo->prepare($sql3);
+            $stmt3->execute();
 
-            $stmt3 = "";
-
-            $values3 = "";
-
-            $stmt3->execute($values3);
-
-            $idTypeTel = $this->_pdo->lastInsertId();
+            $idTypeTel = $stmt3->fetchColumn();
 
             // MAIN INSERT
             $sql = "
