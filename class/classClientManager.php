@@ -1,20 +1,20 @@
 <?php
 class ClientManager
 {
-    private PDO $pdo;
+    private PDO $_pdo;
 
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $_pdo)
     {
-        $this->pdo = $pdo;
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->_pdo = $_pdo;
+        $this->_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     public function addClient(object $clientObj)
     {
         // Extracts the street number and name from the address using Regex
         preg_match("/^(\d+)\s+(.+)$/", $clientObj->adresse, $matches);
-        $clientObj->noPorte = $matches[1];
-        $clientObj->rue = $matches[2];
+        $clientObj->_noPorte = $matches[1];
+        $clientObj->_rue = $matches[2];
 
         // tbladresse INSERT
         $sql1 = "
@@ -22,20 +22,20 @@ class ClientManager
             VALUES (:noPorte, :rue, :ville, :province, :codePostal, :idPays)
         ";
 
-        $stmt1 = $this->pdo->prepare($sql1);
+        $stmt1 = $this->_pdo->prepare($sql1);
 
         $values1 = [
-            ":noPorte" => $clientObj->noPorte,
-            ":rue" => $clientObj->rue,
-            ":ville" => $clientObj->ville,
-            ":province" => $clientObj->province,
-            ":codePostal" => $clientObj->codePostal,
-            ":idPays" => $clientObj->idPays,
+            ":noPorte" => $clientObj->_noPorte,
+            ":rue" => $clientObj->_rue,
+            ":ville" => $clientObj->_ville,
+            ":province" => $clientObj->_province,
+            ":codePostal" => $clientObj->_codePostal,
+            ":idPays" => $clientObj->_idPays,
         ];
 
         $stmt1->execute($values1);
 
-        $idAdresse = $this->pdo->lastInsertId();
+        $idAdresse = $this->_pdo->lastInsertId();
 
         // tblpays INSERT (idPays, pays)
         $sql2 = "";
@@ -46,7 +46,7 @@ class ClientManager
 
         $stmt2->execute($values2);
 
-        $idPays = $this->pdo->lastInsertId();
+        $idPays = $this->_pdo->lastInsertId();
 
 
         // tbltypetel INSERT (idTypeTel, typeTel)
@@ -58,7 +58,7 @@ class ClientManager
 
         $stmt3->execute($values3);
 
-        $idTypeTel = $this->pdo->lastInsertId();
+        $idTypeTel = $this->_pdo->lastInsertId();
 
         // MAIN INSERT
         $sql = "
