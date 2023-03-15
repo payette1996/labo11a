@@ -32,11 +32,11 @@
         echo '<h2>Sélectionnez une voiture pour en savoir plus</h2>
               <ul class="car_list">';
 
-        $voituresArr = $vm->getVoitures($vm);
+        $voituresArr = $vm->getVoitures();
         foreach($voituresArr as $voiture) {
             echo "
-                <li><a href='http://localhost/Laboratoire11B/voitures.php?idVoiture={$voiture['idVoiture']}'>
-                    {$voiture['marque']} {$voiture['modele']}</a></li>
+                <li><a href='http://localhost/Laboratoire11B/voitures.php?idVoiture={$voiture->idVoiture}'>
+                    {$voiture->marque} {$voiture->modele}</a></li>
             ";
         }
     
